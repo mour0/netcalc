@@ -39,7 +39,7 @@ pub fn get_network6(ip6_str:&str,cidr:u8) -> Result<[[u16; 8]; 5], NetHelperErro
 {
     let ip: Ipv6Addr = match ip6_str.parse()  {
         Ok(ip) => ip,
-        Err(a) => return Err(NetHelperError::InvalidIP),
+        Err(_) => return Err(NetHelperError::InvalidIP),
     };
         
     let sm = match cidr_to_sm6(cidr) {
