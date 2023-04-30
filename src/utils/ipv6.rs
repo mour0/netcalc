@@ -24,7 +24,6 @@ pub fn cidr_to_sm6(cidr: u8) -> Result<[u16; 8], NetHelperError> {
 /// IPv6
 /// Calculates the wildcard mask from the provided subnet mask 
 /// __in__ 'sm': Subnet Mask
-/// There are no checks because this function will be called with the output provided by `cidr_to_sm`
 pub fn sm_to_wm6(sm: [u16; 8]) -> [u16; 8] {
     let wm:[u16;8];
     wm = [!sm[0], !sm[1], !sm[2], !sm[3], !sm[4], !sm[5], !sm[6], !sm[7]];
@@ -33,7 +32,7 @@ pub fn sm_to_wm6(sm: [u16; 8]) -> [u16; 8] {
 
 /// IPv6
 /// Calculates Network, Subnet Mask (Long), Wildcard Mask, Broadcast, First and Last Hosts for the provided parameters
-/// __in__ 'ip_str': String containing the IPv6 Address (ex. 192.168.1.1)
+/// __in__ 'ip_str': String containing the IPv6 Address 
 /// __in__ 'cidr': Short notation Subnet Mask
 pub fn get_network6(ip6_str:&str,cidr:u8) -> Result<[[u16; 8]; 5], NetHelperError>
 {
@@ -56,7 +55,7 @@ pub fn get_network6(ip6_str:&str,cidr:u8) -> Result<[[u16; 8]; 5], NetHelperErro
 }
 
 /// IPv6
-/// Calculates all the possible hosts from te subnet mask
+/// Calculates all the possible hosts from the subnet mask
 /// __in__ 'cidr': short notation subnet mask
 pub fn possible_host6(cidr:u8) -> u128
 {

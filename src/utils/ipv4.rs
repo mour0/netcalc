@@ -1,6 +1,8 @@
 use std::net::Ipv4Addr;
 use super::structs::{IPv4Class, NetHelperError};
 
+/// Returns the class of the provided IP Address 
+/// __in__ 'first_octet': IPv4 Address
 pub fn get_class(first_octet: u8) -> Result<IPv4Class,NetHelperError>{
     match first_octet {
         x if /*x >= 0 &&*/ x <= 127 => Ok(IPv4Class::A),
@@ -31,7 +33,6 @@ pub fn cidr_to_sm(cidr: u8) -> Result<[u8; 4], NetHelperError> {
 
 /// Calculates the wildcard mask from the provided subnet mask 
 /// __in__ 'sm': Subnet Mask
-/// There are no checks because this function will be called with the output provided by `cidr_to_sm`
 pub fn sm_to_wm(sm: [u8; 4]) -> [u8; 4] {
     let wm:[u8;4];
     wm = [!sm[0], !sm[1], !sm[2], !sm[3]];
@@ -44,7 +45,7 @@ pub fn sm_to_wm(sm: [u8; 4]) -> [u8; 4] {
 /// __in__ 'cidr': Short notation Subnet Mask
 pub fn get_network(ip4_str:&str,cidr:u8) -> Result<[[u8; 4]; 6],NetHelperError>
 {
-    // Retrieve Network, SM, Wildcard, Brodcast, First Host, Last Host
+    // Network, SM, Wildcard, Brodcast, First Host, Last Host
     let ip: Ipv4Addr = match ip4_str.parse()  {
         Ok(ip) => ip,
         Err(_) => return Err(NetHelperError::InvalidIP),
@@ -65,7 +66,7 @@ pub fn get_network(ip4_str:&str,cidr:u8) -> Result<[[u8; 4]; 6],NetHelperError>
     Ok([network,sm,wm,broadcast,first_host,last_host])
 }
 
-/// Calculates all the possible hosts from te subnet mask
+/// Calculates all the possible hosts from the subnet mask
 /// __in__ 'cidr': short notation subnet mask
 pub fn possible_host(cidr:u8) -> u32
 {
@@ -80,7 +81,7 @@ pub fn possible_host(cidr:u8) -> u32
 
 /// Check if the network is big enough to hold every host
 /// __in__ 'n_host': Vector of hosts per network
-/// __in__ 'max cidr': Max CIDR to hold every host
+/// __in__ 'max_cidr': Max CIDR to hold every host
 fn is_space_enough(n_host: Vec<u32>,max_cidr:u8) -> Result<Vec<(u32,u8)>,NetHelperError>
 {
     let mut nec_cir: u8 = 0;
@@ -110,6 +111,9 @@ fn is_space_enough(n_host: Vec<u32>,max_cidr:u8) -> Result<Vec<(u32,u8)>,NetHelp
 }
 
 /// Calculates VLSM 
+/// __in__ 'ip': IPv4 Address
+/// __in__ 'cidr': short notation subnet mask
+/// __in__ 'n_hosts': Vector of hosts per network
 pub fn vlsm(ip:&str,cidr:u8,n_hosts: Vec<u32>) -> Result<Vec<Vec<String>>,NetHelperError>
 {
     if cidr >= 31 || cidr == 0 {
